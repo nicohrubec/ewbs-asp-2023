@@ -7,21 +7,19 @@ market(M) :- m_req(M, Q, F).
 1 {f_open(1..N)} N :- n_farms(N).
 
 % deliver up to max production from every open farm to every market
-{transport_prod(J, 1..C, 1..M)} :- f_open(J), n_markets(M), f_prod(J, C).
+{transport_prod(J, 1..M, 1..C)} :- f_open(J), n_markets(M), f_prod(J, C).
 
 % a farm cannot deliver different amounts to the same farm
-:- transport_prod(F, D1, M), transport_prod(F, D2, M), D1!=D2.
+:- transport_prod(F, M, D1), transport_prod(F, M, D2), D1!=D2.
 
 % a farm cannot deliver more than it can produce
-f_delivered(F, S) :- f_open(F), S = #sum{Q, M, F : transport_prod(F, Q, M), market(M)}.
+f_delivered(F, S) :- f_open(F), S = #sum{Q, M, F : transport_prod(F, M, Q), market(M)}.
 :- f_delivered(F, S), f_open(F), f_prod(F, C), S > C.
 
 % a market can receive resources from a maximum of farms
-m_received_count(M, C) :- market(M), C = #count{F, M : transport_prod(F, _, M), f_open(F)}.
+m_received_count(M, C) :- market(M), C = #count{F, M : transport_prod(F, M, _), f_open(F)}.
 :- m_received_count(M, C), market(M), m_req(M, Q, F), C > F.
 
 % each market needs to get exactly the requested amount of resources
-m_received(M, S) :- market(M), S = #sum{Q, F, M : transport_prod(F, Q, M), f_open(F)}.
+m_received(M, S) :- market(M), S = #sum{Q, F, M : transport_prod(F, M, Q), f_open(F)}.
 :- m_received(M, S), market(M), m_req(M, Q, F), S != Q.
-
-% TODO: currently the predicate transport_prod is wrong it should be (Farm, Market, Quantity)
