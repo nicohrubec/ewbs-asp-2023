@@ -29,9 +29,4 @@ farm_transport_cost(F, M, C*Q) :- f_open(F), market(M), transport_cost(M, F, C),
 farm_transport_cost_sum(F, S) :- f_open(F), S = #sum{C, F: farm_transport_cost(F, M, C)}.
 farm_total(F, O+T) :- f_open(F), f_open_cost(F, O), farm_transport_cost_sum(F, T).
 
-% enforce that farm_total is not the same for farms
-% this is super hacky and should not be necessary but currently without it the program essentially
-% optimizes for them being the same since they won't be summed twice
-:- farm_total(F1, T1), farm_total(F2, T2), F1!=F2, T1=T2.
-
-#minimize{S : farm_total(F, S), f_open(F)}.
+#minimize{S, F : farm_total(F, S), f_open(F)}.
