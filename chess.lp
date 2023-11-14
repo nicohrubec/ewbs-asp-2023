@@ -3,7 +3,6 @@
 { bishop(1..S, 1..S) } = B :- size(S), n_bishops(B).
 
 % eliminate assignments where a rock and bishop are assigned to the same tile
-% TODO: covered by rule below?
 :- rook(R, C), bishop(R, C).
 
 % ensure that rooks do not attack other pieces
