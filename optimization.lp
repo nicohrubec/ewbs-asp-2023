@@ -24,6 +24,9 @@ m_received_count(M, C) :- market(M), C = #count{F, Q : transport_prod(F, M, Q), 
 m_received(M, S) :- market(M), S = #sum{Q, F : transport_prod(F, M, Q), f_open(F)}.
 :- m_received(M, S), market(M), m_req(M, Q, F), S != Q.
 
+% answers with no transport_prod for an open farm should not be accepted
+:- f_open(J), not transport_prod(J, _, _).
+
 % get transportation cost for each farm
 farm_transport_cost(F, M, C*Q) :- f_open(F), market(M), transport_cost(M, F, C), transport_prod(F, M, Q).
 farm_transport_cost_sum(F, S) :- f_open(F), S = #sum{C, M: farm_transport_cost(F, M, C)}.

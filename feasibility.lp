@@ -23,3 +23,6 @@ m_received_count(M, C) :- market(M), C = #count{F, Q : transport_prod(F, M, Q), 
 % each market needs to get exactly the requested amount of resources
 m_received(M, S) :- market(M), S = #sum{Q, F : transport_prod(F, M, Q), f_open(F)}.
 :- m_received(M, S), market(M), m_req(M, Q, F), S != Q.
+
+% answers with no transport_prod for an open farm should not be accepted
+:- f_open(J), not transport_prod(J, _, _).
